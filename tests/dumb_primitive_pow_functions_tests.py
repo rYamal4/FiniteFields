@@ -16,7 +16,7 @@ class TestDumbPrimitivePowFunctions(unittest.TestCase):
         coefficients = [[1, 0], [1, 1], [2, 1], [0, 2], [2, 0], [2, 2], [1, 2], [0, 1]]
         a1, a2 = 1, 1
 
-        functions = DumbPrimitivePowFunctions(3, 2).get_functions()
+        functions = DumbPrimitivePowFunctions(3, 2).get()
 
         for function, coefficient in zip(functions, coefficients):
             self.assertEqual(coefficient, function(a1, a2))
@@ -26,7 +26,7 @@ class TestDumbPrimitivePowFunctions(unittest.TestCase):
         coefficients = [[1, 0], [1, 1], [0, 1], [0, 1], [0, 1], [1, 1], [1, 0]]
         a1, a2, a3 = 1, 1, 0
 
-        functions = DumbPrimitivePowFunctions(2, 3).get_functions()
+        functions = DumbPrimitivePowFunctions(2, 3).get()
 
         for function, coefficient in zip(functions, coefficients):
             self.assertEqual(coefficient, function(a1, a2, a3))
@@ -38,7 +38,7 @@ class TestDumbPrimitivePowFunctions(unittest.TestCase):
                         [1, 2], [1, 1], [0, 1]]
         a1, a2, a3 = 2, 1, 0
 
-        functions = DumbPrimitivePowFunctions(3, 3).get_functions()
+        functions = DumbPrimitivePowFunctions(3, 3).get()
 
         for function, coefficient in zip(functions, coefficients):
             self.assertEqual(coefficient, function(a1, a2, a3))

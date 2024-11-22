@@ -15,7 +15,7 @@ class DumbPrimitivePowFunctions(AbstractPrimitivePowFunctions):
         self.__base_function = self.__generate_base_function()
         self.__functions = None
 
-    def get_functions(self):
+    def get(self):
         if self.__functions is None:
             self.__functions = []
             self.__generate_functions()
