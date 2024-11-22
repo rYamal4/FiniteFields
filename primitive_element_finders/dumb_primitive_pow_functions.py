@@ -45,7 +45,6 @@ class DumbPrimitivePowFunctions(AbstractPrimitivePowFunctions):
         func *= self.__symbols["A"]
         func = expand(func)
         func = func.subs(self.__symbols["A"] ** self.p, self.__base_function)
-        func = expand(func)
         func = sum((coef % self.n) * var for var, coef in func.as_coefficients_dict().items())
         return func
 
