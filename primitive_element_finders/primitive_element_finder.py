@@ -1,6 +1,7 @@
 from itertools import product
 
 from custom_collections.list_set import ListSet
+from primitive_element_finders.dumb_primitive_pow_functions import DumbPrimitivePowFunctions
 from primitive_element_finders.primitive_pow_functions import AbstractPrimitivePowFunctions
 from utils.logger import logger
 
@@ -23,12 +24,12 @@ class DumbPrimitiveElementFinder:
     """
 
     def __init__(self,
-                 n: int,
                  p: int,
+                 n: int,
                  primitive_pow_funcs: AbstractPrimitivePowFunctions):
-        self.__n = n
         self.__p = p
-        self.__functions = primitive_pow_funcs
+        self.__n = n
+        self.__functions = DumbPrimitivePowFunctions(p, n)
         self.__cached_primitives = ListSet()
         self.__primitive_pow_zero = self.__get_primitive_pow_zero()
         self.__is_found_all_primitives = False
@@ -37,7 +38,7 @@ class DumbPrimitiveElementFinder:
         if len(self.__cached_primitives) > 0:
             return self.__cached_primitives[0]
         logger.info("Finding single primitive element...")
-        for args_list in product(range(self.__n), repeat=self.__p):
+        for args_list in product(range(self.__p), repeat=self.__n):
             if self.__functions.get()[-1](*args_list) == self.__primitive_pow_zero:
                 flag = True
                 for function in self.__functions.get()[:-1]:
@@ -53,7 +54,7 @@ class DumbPrimitiveElementFinder:
         if self.__is_found_all_primitives:
             return self.__cached_primitives
         logger.info("Finding all primitive elements...")
-        for args_list in product(range(self.__n), repeat=self.__p):
+        for args_list in product(range(self.__p), repeat=self.__n):
             if self.__create_shifted_matrix(args_list) in self.__cached_primitives:
                 continue
             if self.__functions.get()[-1](*args_list) == self.__primitive_pow_zero:
@@ -68,7 +69,7 @@ class DumbPrimitiveElementFinder:
         return self.__cached_primitives
 
     def __get_primitive_pow_zero(self):
-        a = [0] * self.__p
+        a = [0] * self.__n
         a[-1] = 1
         return a
 
