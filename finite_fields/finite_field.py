@@ -32,7 +32,7 @@ class FiniteField:
             current = (np.dot(current, self.__primitive_matrix)) % self.__p
             first_part.append(current)
         self.__built_matrices = first_part + second_part
-        logger.info("Built the field")
+        logger.info("Field successfully built.")
         return self.__built_matrices
 
     def get_elements(self, view: str = 'matrix'):
