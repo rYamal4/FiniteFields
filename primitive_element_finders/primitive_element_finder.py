@@ -1,12 +1,12 @@
 from itertools import product
 
 from custom_collections.list_set import ListSet
+from primitive_element_finders.abstract_primitive_finder import AbstractPrimitiveFinder
 from primitive_element_finders.dumb_primitive_pow_functions import DumbPrimitivePowFunctions
-from primitive_element_finders.primitive_pow_functions import AbstractPrimitivePowFunctions
 from utils.logger import logger
 
 
-class DumbPrimitiveElementFinder:
+class DumbPrimitiveElementFinder(AbstractPrimitiveFinder):
     """
     A class to find primitive elements in finite fields.
 
@@ -23,10 +23,7 @@ class DumbPrimitiveElementFinder:
         Finds and returns all primitive elements.
     """
 
-    def __init__(self,
-                 p: int,
-                 n: int,
-                 primitive_pow_funcs: AbstractPrimitivePowFunctions):
+    def __init__(self, p: int, n: int,):
         self.__p = p
         self.__n = n
         self.__functions = DumbPrimitivePowFunctions(p, n)
@@ -34,7 +31,7 @@ class DumbPrimitiveElementFinder:
         self.__primitive_pow_zero = self.__get_primitive_pow_zero()
         self.__is_found_all_primitives = False
 
-    def find_any_primitive(self):
+    def find_any(self):
         if len(self.__cached_primitives) > 0:
             return self.__cached_primitives[0]
         logger.info("Finding single primitive element...")
@@ -50,7 +47,7 @@ class DumbPrimitiveElementFinder:
                     self.__cached_primitives.append(primitive)
                     return primitive
 
-    def find_all_primitives(self):
+    def find_all(self):
         if self.__is_found_all_primitives:
             return self.__cached_primitives
         logger.info("Finding all primitive elements...")
