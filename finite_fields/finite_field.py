@@ -4,6 +4,13 @@ from utils.logger import logger
 
 
 class FiniteField:
+    """
+    Class for building finite field of size p^n with given p, n and Galois matrix.
+    Galois matrix is the companion matrix of a primitive polynomial mod p.
+
+    You can obtain elements of the field using get_elements() method in matrix or vector form.
+    After obtaining elements in first time, this then object caches them.
+    """
     def __init__(self, p, n, primitive_matrix: np.ndarray):
         self.__p = p
         self.__n = n
@@ -29,6 +36,11 @@ class FiniteField:
         return self.__built_matrices
 
     def get_elements(self, view: str = 'matrix'):
+        """
+        Method for obtaining elements of the finite field in matrix or vector form.
+        :param view: 'matrix' | 'vector'.
+        :return: list of np.ndarray that represents elements of the finite field.
+        """
         if view == 'matrix':
             return self.__build()
         if view == 'vector':
