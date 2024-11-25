@@ -49,15 +49,21 @@ class FiniteFieldsApp:
         if p == -1:
             messagebox.showerror("Ошибка", f"{num} - это не степень простого числа")
             return
+        self.app.progressbar['value'] = 0
         p, k = int(p), int(math.log(num, p))
         self.__primitive_finder = FastPrimitiveFinder(p, k)
+        self.app.label_status['text'] = "Поиск примитивного элемента..."
         primitive = self.__primitive_finder.find_any()
         self.app.progressbar['value'] = 20
         self.__finite_field = FiniteField(p, k, primitive)
+        self.app.label_status['text'] = "Построение конечного поля..."
         self.__elements = self.__finite_field.get_elements(view='vector', progressbar=self.app.progressbar)
-        self.app.progressbar['value'] = 100
+        self.app.progressbar['value'] = 90
+        self.app.label_status['text'] = "Заполнение списка..."
         self.app._root.after(0, self.fill_listbox)
 
     def fill_listbox(self):
         self.app.listbox_field_elements.delete(0, tk.END)
-        self.app.listbox_field_elements.insert("end", *[f"A^{i+1} = {self.__elements[i]}" for i in range(0, 1000)])
+        self.app.listbox_field_elements.insert("end", *[f"A^{i+1} = {self.__elements[i]}" for i in range(0, min(1000, len(self.__elements)))])
+        self.app.progressbar['value'] = 100
+        self.app.label_status['text'] = "Поле построено!"

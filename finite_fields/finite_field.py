@@ -29,16 +29,16 @@ class FiniteField:
         for i in range(self.__p**self.__n - 1 - self.__n):
             current = (np.dot(current, self.__primitive_matrix)) % self.__p
             second_part.append(current)
-            if progressbar is not None and progress != 20 + int((i / (self.__p ** self.__n - 1)) * 80):
-                progress = 20 + int((i / (self.__p ** self.__n - 1)) * 80)
+            if progressbar is not None and progress != 20 + int((i / (self.__p ** self.__n - 1)) * 70):
+                progress = 20 + int((i / (self.__p ** self.__n - 1)) * 70)
                 progressbar['value'] = progress
                 last = i
         first_part = []
         for j in range(self.__n - 1):
             current = (np.dot(current, self.__primitive_matrix)) % self.__p
             first_part.append(current)
-            if progressbar is not None and progress != 20 + int((last + j / (self.__p**self.__n - 1)) * 80):
-                progress = 20 + int((last + j / (self.__p**self.__n - 1)) * 80)
+            if progressbar is not None and progress != 20 + int(((last + j) / (self.__p**self.__n - 1)) * 70):
+                progress = 20 + int(((last + j) / (self.__p**self.__n - 1)) * 70)
                 progressbar['value'] = progress
         self.__built_matrices = first_part + second_part
         logger.info("Field successfully built.")
