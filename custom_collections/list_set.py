@@ -3,7 +3,7 @@ import numpy as np
 
 class ListSet(list):
     """
-    ONLY FOR STORING NDARRAYS WITH DTYPE=INT32
+    ONLY FOR STORING 2D NDARRAYS WITH DTYPE=INT32
 
     Derived from: https://stackoverflow.com/a/15993515
 
@@ -94,6 +94,8 @@ class ListSet(list):
         item = super().__getitem__(*args, **kwargs)
         if isinstance(item, bytes):
             item = np.frombuffer(item, dtype=np.int32)
+            size = np.int32(np.sqrt(len(item)))
+            item.shape = (size, size)
         return item
 
     def pop(self, i=-1):
@@ -102,6 +104,8 @@ class ListSet(list):
         self.remove(item)
         if isinstance(item, bytes):
             item = np.frombuffer(item, dtype=np.int32)
+            size = np.int32(np.sqrt(len(item)))
+            item.shape = (size, size)
         return item
 
     def __contains__(self, item):
@@ -115,7 +119,10 @@ class ListSet(list):
         """
         for item in super(ListSet, self).__iter__():
             if isinstance(item, bytes):
-                yield np.frombuffer(item, dtype=np.int32)
+                array = np.frombuffer(item, dtype=np.int32)
+                size = np.int32(np.sqrt(len(array)))
+                array.shape = (size, size)
+                yield array
             else:
                 yield item
 

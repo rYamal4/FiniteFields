@@ -1,6 +1,7 @@
 import galois
 import numpy as np
 
+from custom_collections.list_set import ListSet
 from primitive_element_finders.abstract_primitive_finder import AbstractPrimitiveFinder
 from utils.logger import logger
 
@@ -21,10 +22,11 @@ class FastPrimitiveFinder(AbstractPrimitiveFinder):
         Finds and returns all primitive elements.
     """
     def __init__(self, p, n):
+        self.__is_found_all_primitives = False
         self.__p = p
         self.__n = n
-        self.__cached_primitive: np.ndarray = None
-        self.__cached_primitives: list[np.ndarray] = None
+        self.__not_primitives: ListSet[np.ndarray] = ListSet()
+        self.__cached_primitives: ListSet[np.ndarray] = ListSet()
 
     def find_any(self):
         """
@@ -33,12 +35,12 @@ class FastPrimitiveFinder(AbstractPrimitiveFinder):
         :return: primitive element of type np.ndarray
         """
         logger.info("Finding primitive element...")
-        if self.__cached_primitive is not None:
+        if len(self.__cached_primitives) > 0:
             logger.info("Primitive element is cached!")
-            return self.__cached_primitive
+            return self.__cached_primitives[0]
         poly = galois.primitive_poly(self.__p, self.__n)
         A = self.__get_companion_matrix(poly.coefficients())
-        self.__cached_primitive = A
+        self.__cached_primitives.add(A)
         logger.info("Found primitive element.")
         return A
 
@@ -49,15 +51,13 @@ class FastPrimitiveFinder(AbstractPrimitiveFinder):
         :return: list of primitive elements of type np.ndarray
         """
         logger.info("Finding primitive elements...")
-        if self.__cached_primitives is not None:
+        if self.__is_found_all_primitives:
             logger.info("Primitive elements are cached!")
             return self.__cached_primitives
-        self.__cached_primitives = []
         for poly in galois.primitive_polys(self.__p, self.__n):
-            if self.__cached_primitive is None:
-                self.__cached_primitive = self.__get_companion_matrix(poly.coefficients())
-            self.__cached_primitives.append(self.__get_companion_matrix(poly.coefficients()))
+            self.__cached_primitives.add(self.__get_companion_matrix(poly.coefficients()))
         logger.info("Found all primitive elements.")
+        self.__is_found_all_primitives = True
         return self.__cached_primitives
 
     def __get_companion_matrix(self, coefficients):
