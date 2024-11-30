@@ -1,5 +1,10 @@
+import numpy as np
+
+
 class ListSet(list):
     """
+    ONLY FOR STORING 2D NDARRAYS WITH DTYPE=INT32
+
     Derived from: https://stackoverflow.com/a/15993515
 
     Initialization:
@@ -29,13 +34,15 @@ class ListSet(list):
 
     def __init__(self, *args, idx_of=None):
         super(ListSet, self).__init__(*args)
+        self.__np_array_list = {}
         if idx_of:
             self.idx_of = idx_of.copy()
         else:
-            self.idx_of = {item: i
-                           for (i, item) in enumerate(self)}
+            self.idx_of = {item: i for (i, item) in enumerate(self)}
 
     def add(self, item):
+        if isinstance(item, np.ndarray):
+            item = item.tobytes()
         if item not in self.idx_of:
             super(ListSet, self).append(item)
             self.idx_of[item] = len(self) - 1
@@ -46,6 +53,8 @@ class ListSet(list):
         but remove and pop from other than the end
         can change the internal list's order.
         """
+        if isinstance(item, np.ndarray):
+            item = item.tobytes()
         self.add(item)
 
     def copy(self):
@@ -58,6 +67,8 @@ class ListSet(list):
     def __iadd__(self, items):
         """ self += items """
         for item in items:
+            if isinstance(item, np.ndarray):
+                item = item.tobytes()
             self.add(item)
         return self
 
@@ -67,24 +78,53 @@ class ListSet(list):
 
         If the element is not a member, raise a KeyError.
         """
+        if isinstance(element, np.ndarray):
+            element = element.tobytes()
         try:
             position = self.idx_of.pop(element)
-        except:
-            raise (KeyError(element))
+        except KeyError:
+            raise KeyError(element)
 
         last_item = super(ListSet, self).pop()
         if position != len(self):
             self[position] = last_item
             self.idx_of[last_item] = position
 
+    def __getitem__(self, *args, **kwargs):
+        item = super().__getitem__(*args, **kwargs)
+        if isinstance(item, bytes):
+            item = np.frombuffer(item, dtype=np.int32)
+            size = np.int32(np.sqrt(len(item)))
+            item.shape = (size, size)
+        return item
+
     def pop(self, i=-1):
         """ Remove by internal list position. """
         item = self[i]
         self.remove(item)
+        if isinstance(item, bytes):
+            item = np.frombuffer(item, dtype=np.int32)
+            size = np.int32(np.sqrt(len(item)))
+            item.shape = (size, size)
         return item
 
     def __contains__(self, item):
+        if isinstance(item, np.ndarray):
+            item = item.tobytes()
         return item in self.idx_of
+
+    def __iter__(self):
+        """
+        Ensure iteration over the ListSet converts bytes back to np.ndarray.
+        """
+        for item in super(ListSet, self).__iter__():
+            if isinstance(item, bytes):
+                array = np.frombuffer(item, dtype=np.int32)
+                size = np.int32(np.sqrt(len(array)))
+                array.shape = (size, size)
+                yield array
+            else:
+                yield item
 
     def _str_body(self):
         return ", ".join(repr(item) for item in self)
