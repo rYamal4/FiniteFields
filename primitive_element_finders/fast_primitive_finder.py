@@ -16,9 +16,11 @@ class FastPrimitiveFinder(AbstractPrimitiveFinder):
 
     Methods:
     -------
-    find_any_primitive():
-        Finds and returns any single primitive element.
-    find_all_primitives():
+    find_first():
+        Finds and returns first primitive element.
+    find_next():
+        Finds and returns next primitive element
+    find_all():
         Finds and returns all primitive elements.
     """
     def __init__(self, p, n):
