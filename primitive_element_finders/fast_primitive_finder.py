@@ -58,7 +58,7 @@ class FastPrimitiveFinder(AbstractPrimitiveFinder):
             return self.__cached_primitives[-1]
         except StopIteration:
             self.__primitive_counter = self.__primitive_counter % len(self.__cached_primitives)
-            logger.info(f"Already found all primitives, returning {self.__primitive_counter} element")
+            logger.info(f"Already found all primitives, returning {self.__primitive_counter}th element")
             primitive = self.__cached_primitives[self.__primitive_counter]
             self.__primitive_counter += 1
             return primitive
