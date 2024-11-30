@@ -3,7 +3,7 @@ from abc import abstractmethod
 
 class AbstractPrimitiveFinder:
     @abstractmethod
-    def find_any(self):
+    def find_first(self):
         pass
 
     @abstractmethod

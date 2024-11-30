@@ -36,7 +36,7 @@ class DumbPrimitiveElementFinder(AbstractPrimitiveFinder):
         self.__primitive_pow_zero = self.__get_primitive_pow_zero()
         self.__is_found_all_primitives = False
 
-    def find_any(self):
+    def find_first(self):
         if self.__cached_primitive is not None:
             return self.__cached_primitive
         logger.info("Finding single primitive element...")

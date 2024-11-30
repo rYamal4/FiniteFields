@@ -5,7 +5,6 @@ import threading
 import tkinter as tk
 
 import numpy as np
-from PIL import ImageTk, Image
 from formation import AppBuilder
 from tkinter import messagebox
 
@@ -16,6 +15,7 @@ from utils.is_prime import is_prime_power
 
 class FiniteFieldsApp:
     def __init__(self):
+        self._current_canvas = None
         self.primitive = None
         self.app = AppBuilder(path='resources/finite_fields_app_formation.xml')
         self.__primitive_finder = None
@@ -58,7 +58,7 @@ class FiniteFieldsApp:
         p, k = int(p), int(math.log(num, p))
         self.__primitive_finder = FastPrimitiveFinder(p, k)
         self.app.label_status['text'] = "Поиск примитивного элемента..."
-        primitive = self.__primitive_finder.find_any()
+        primitive = self.__primitive_finder.find_first()
         self.app.progressbar['value'] = 20
         self.__finite_field = FiniteField(p, k, primitive)
         self.app.label_status['text'] = "Построение конечного поля..."
@@ -87,39 +87,30 @@ class FiniteFieldsApp:
 
         self._current_canvas = tk.Canvas(self.app._root, width=canvas_width, height=canvas_height)
         self._current_canvas.pack(side=tk.LEFT, padx=10, pady=10)
-
-        # Отрисовка заголовка
         self._current_canvas.create_text(20, 20, text=title, font=("Arial", 12, "bold"), anchor="nw")
 
-        # Отрисовка скобок
-        bracket_width = 10  # Ширина скобок
-        top_offset = 40  # Отступ сверху для заголовка
+        top_offset = 40
         for i in range(rows):
-            y_top = i * cell_size + top_offset + 5  # Верхний край ячейки
-            y_bottom = (i + 1) * cell_size + top_offset - 5  # Нижний край ячейки
+            y_top = i * cell_size + top_offset + 5
+            y_bottom = (i + 1) * cell_size + top_offset - 5
 
-            # Левая скобка
-            self._current_canvas.create_line(10, y_top, 10, y_bottom, width=2)  # Вертикальная линия
+            self._current_canvas.create_line(10, y_top, 10, y_bottom, width=2)
             if i == 0:
-                self._current_canvas.create_line(10, y_top, 20, y_top, width=2)  # Верхняя горизонтальная
+                self._current_canvas.create_line(10, y_top, 20, y_top, width=2)
             if i == rows - 1:
-                self._current_canvas.create_line(10, y_bottom, 20, y_bottom, width=2)  # Нижняя горизонтальная
-
-            # Правая скобка
+                self._current_canvas.create_line(10, y_bottom, 20, y_bottom, width=2)
             x_right = canvas_width - 10
-            self._current_canvas.create_line(x_right, y_top, x_right, y_bottom, width=2)  # Вертикальная линия
+            self._current_canvas.create_line(x_right, y_top, x_right, y_bottom, width=2)
             if i == 0:
-                self._current_canvas.create_line(x_right - 10, y_top, x_right, y_top, width=2)  # Верхняя горизонтальная
+                self._current_canvas.create_line(x_right - 10, y_top, x_right, y_top, width=2)
             if i == rows - 1:
                 self._current_canvas.create_line(x_right - 10, y_bottom, x_right, y_bottom,
-                                                 width=2)  # Нижняя горизонтальная
+                                                 width=2)
 
-        # Отрисовка чисел
         for i in range(rows):
             for j in range(cols):
-                x = j * cell_size + 30  # Центр ячейки по X (учитываем отступ для левой скобки)
-                y = i * cell_size + top_offset + cell_size // 2  # Центр ячейки по Y
+                x = j * cell_size + 30
+                y = i * cell_size + top_offset + cell_size // 2
                 self._current_canvas.create_text(x, y, text=str(array[i, j]), font=("Arial", 10), fill="black")
 
-        # Сохраняем ссылку на текущий Canvas
         self._current_canvas = self._current_canvas
