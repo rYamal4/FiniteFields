@@ -112,11 +112,41 @@ class FiniteFieldsApp:
         rows, cols = array.shape
         cell_size = 25
 
-        canvas_width = cols * cell_size + 40
-        canvas_height = rows * cell_size + 40
+        canvas_width = min(cols * cell_size + 40, 290)
+        canvas_height = min(rows * cell_size + 40, 290)
 
-        self._current_canvas = tk.Canvas(self.app._root, width=canvas_width, height=canvas_height)
-        self._current_canvas.pack(side=tk.LEFT, padx=10, pady=10)
+        if not hasattr(self, "_container_frame") or self._container_frame is None:
+            self._container_frame = tk.Frame(self.app._root)
+            self._container_frame.pack(side=tk.LEFT, padx=10, pady=10)
+
+            self._h_scrollbar = tk.Scrollbar(self._container_frame, orient=tk.HORIZONTAL)
+            self._v_scrollbar = tk.Scrollbar(self._container_frame, orient=tk.VERTICAL)
+
+        self._current_canvas = tk.Canvas(
+            self._container_frame,
+            width=canvas_width,
+            height=canvas_height,
+            scrollregion=(0, 0, cols * cell_size + 40, rows * cell_size + 40)
+        )
+        self._current_canvas.grid(row=0, column=0, sticky="nsew")
+
+        self._h_scrollbar.config(command=self._current_canvas.xview)
+        self._v_scrollbar.config(command=self._current_canvas.yview)
+
+        if cols * cell_size + 40 > 290:
+            self._h_scrollbar.grid(row=1, column=0, sticky="ew")
+            self._current_canvas.configure(xscrollcommand=self._h_scrollbar.set)
+        else:
+            self._h_scrollbar.grid_forget()
+            self._current_canvas.configure(xscrollcommand="")
+
+        if rows * cell_size + 40 > 290:
+            self._v_scrollbar.grid(row=0, column=1, sticky="ns")
+            self._current_canvas.configure(yscrollcommand=self._v_scrollbar.set)
+        else:
+            self._v_scrollbar.grid_forget()
+            self._current_canvas.configure(yscrollcommand="")
+
         self._current_canvas.create_text(20, 20, text=title, font=("Arial", 12, "bold"), anchor="nw")
 
         top_offset = 40
@@ -129,21 +159,18 @@ class FiniteFieldsApp:
                 self._current_canvas.create_line(10, y_top, 20, y_top, width=2)
             if i == rows - 1:
                 self._current_canvas.create_line(10, y_bottom, 20, y_bottom, width=2)
-            x_right = canvas_width - 10
+            x_right = cols * cell_size + 30
             self._current_canvas.create_line(x_right, y_top, x_right, y_bottom, width=2)
             if i == 0:
                 self._current_canvas.create_line(x_right - 10, y_top, x_right, y_top, width=2)
             if i == rows - 1:
-                self._current_canvas.create_line(x_right - 10, y_bottom, x_right, y_bottom,
-                                                 width=2)
+                self._current_canvas.create_line(x_right - 10, y_bottom, x_right, y_bottom, width=2)
 
         for i in range(rows):
             for j in range(cols):
                 x = j * cell_size + 30
                 y = i * cell_size + top_offset + cell_size // 2
                 self._current_canvas.create_text(x, y, text=str(array[i, j]), font=("Arial", 10), fill="black")
-
-        self._current_canvas = self._current_canvas
 
     def __change_lang_to_russian(self):
         self.app.label_field_size['text'] = 'Размер поля'
