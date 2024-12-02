@@ -1,5 +1,5 @@
 from gui.finite_fields_app import FiniteFieldsApp
 
 
-a = FiniteFieldsApp()
-a.run()
+app = FiniteFieldsApp()
+app.run()
